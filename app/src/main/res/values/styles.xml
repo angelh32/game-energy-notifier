@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Regular">
+<!--        <item name="android:fontFamily">@font/</item>-->
+<!--        <item name="fontFamily">@font/dancing_script</item>-->
+<!--        <item name="android:textStyle">normal</item>-->
+    </style>
+</resources>
