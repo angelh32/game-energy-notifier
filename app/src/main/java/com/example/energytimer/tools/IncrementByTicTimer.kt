@@ -9,17 +9,17 @@ class IncrementByTicTimer(
 	private val updateTextCallback: (timeLeft: Array<String>) -> Unit,
 ) {
 	private lateinit var cTimer: CountDownTimer
-	var isTimerRuning = false
+	var isTimerRunning = false
 	private var timer: CustomTimer = currentTimer
 	var currentValue = 0 // in energy units
 	var timeNextTic: Long = 0 // in milliseconds
-	var timeToFinish: Long = 0 // in seconds
+	private var timeToFinish: Long = 0 // in seconds
 
 	init {
 		refreshValues()
 	}
 
-	fun refreshValues(){
+	private fun refreshValues(){
 		val currentDate = Date().time
 		val stack = (currentDate-timer.startDate)/(timer.tic*1000)
 		currentValue=timer.initial+stack.toInt()
@@ -30,20 +30,22 @@ class IncrementByTicTimer(
 
 	fun startCount() {
 		if (currentValue < timer.max) {
-			startTimer()
+			refreshValues()
+			cancelTimer()
+			cTimer.start()
 		}
 	}
 
 	fun formatAndReturn(timeLeft: Long): Array<String>{
 		return arrayOf(
-			formatFromMillisecons(timeLeft+timeToFinish),
-			formatFromMillisecons(timeLeft),
+			formatFromMilliseconds(timeLeft+timeToFinish),
+			formatFromMilliseconds(timeLeft),
 			"$currentValue/${timer.max}"
 		)
 	}
 
-	fun formatFromMillisecons(timeLeft: Long):String{
-		var valuesArray = arrayOf(
+	private fun formatFromMilliseconds(timeLeft: Long):String{
+		val valuesArray: Array<Long> = arrayOf(
 			timeLeft / (24 * 60 * 60 * 1000), // days
 			timeLeft / (60 * 60 * 1000) % 24, // hours
 			timeLeft / (60 * 1000) % 60, // minutes
@@ -55,8 +57,8 @@ class IncrementByTicTimer(
 				response += String.format("%02d:", i)
 			}
 		}
-		if(response.length>0) {
-			response = response.substring(0, response.length - 1);
+		if(response.isNotEmpty()) {
+			response = response.substring(0, response.length - 1)
 		}
 		return response
 	}
@@ -68,18 +70,14 @@ class IncrementByTicTimer(
 			}
 			override fun onFinish() {
 				currentValue++
-				if (currentValue<timer.max){
-					refreshValues()
-					cancelTimer()
-					cTimer.start()
-				}
+				startCount()
 			}
 		}
-		isTimerRuning=true
+		isTimerRunning=true
 		cTimer.start()
 	}
 
 	fun cancelTimer() {
-		cTimer!!.cancel()
+		cTimer.cancel()
 	}
 }

@@ -5,6 +5,7 @@ import androidx.room.*
 @Entity
 data class CustomTimer(
 	@PrimaryKey(autoGenerate = true) val tid: Int,
+	val typeId: Int,
 	@ColumnInfo(name = "timer_name") val timerName: String,
 	@ColumnInfo(name = "description") val description: String,
 	@ColumnInfo(name = "initial") val initial: Int,

@@ -1,6 +1,5 @@
 package com.example.energytimer
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,10 +12,11 @@ import androidx.room.Room
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.databinding.ActivityMainBinding
+import com.example.energytimer.tools.DatabaseName
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,15 +35,19 @@ class MainActivity : AppCompatActivity() {
 		setupActionBarWithNavController(navController, appBarConfiguration)
 
 		binding.fab.setOnClickListener { view ->
-			insert(this.applicationContext)
+			insert()
 			Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 				.setAction("Action", null).show()
 		}
 	}
 
-	fun insert(context: Context) = runBlocking {
-		launch {
-			db = Room.inMemoryDatabaseBuilder(context, LocalDatabase::class.java).build()
+	fun insert() = runBlocking {
+		thread {
+			db = Room.databaseBuilder(
+				applicationContext,
+				LocalDatabase::class.java,
+				DatabaseName
+			).build()
 			val timerDao = db.customTimerDao()
 			val customTimer =
 				CustomTimer(1, "timer-1", "description", 1, 160, 480, Date().time, Date().time)

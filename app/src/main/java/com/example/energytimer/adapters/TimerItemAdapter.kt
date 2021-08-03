@@ -16,7 +16,7 @@ import java.util.*
 class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 	ListAdapter<CustomTimer, TimerItemAdapter.CustomTimerViewHolder>(CustomTimerDiffCallback) {
 	class CustomTimerViewHolder(itemView: View, val onClick: (CustomTimer) -> Unit) :
-		RecyclerView.ViewHolder(itemView){
+		RecyclerView.ViewHolder(itemView) {
 		private val timerName: TextView = itemView.findViewById(R.id.timer_name)
 		private val description: TextView = itemView.findViewById(R.id.description)
 		private val startDateText: TextView = itemView.findViewById(R.id.start_date)
@@ -28,28 +28,26 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 
 		init {
 			itemView.setOnClickListener {
-				currentTimer?.let {
-					onClick(it)
-				}
+				onClick(currentTimer)
 			}
 		}
 
 		/* Bind flower name and image. */
 		fun bind(timer: CustomTimer) {
 			currentTimer = timer
-			val myTimer = IncrementByTicTimer (currentTimer, { timeLeft -> updateText(timeLeft)})
-			if(!myTimer.isTimerRuning){
-				myTimer.startTimer();
+			val myTimer = IncrementByTicTimer(currentTimer) { timeLeft -> updateText(timeLeft) }
+			if (!myTimer.isTimerRunning) {
+				myTimer.startTimer()
 			}
 			timerName.text = timer.timerName
 			description.text = timer.description
 			val pattern = "MM-dd-yyyy hh:mm"
-			val simpleDateFormat = SimpleDateFormat(pattern)
-			startDateText.text=simpleDateFormat.format(Date(timer.startDate))
-			finishDateText.text=simpleDateFormat.format(Date(timer.finishDate))
+			val simpleDateFormat = SimpleDateFormat(pattern, Locale.US)
+			startDateText.text = simpleDateFormat.format(Date(timer.startDate))
+			finishDateText.text = simpleDateFormat.format(Date(timer.finishDate))
 		}
 
-		private fun updateText(response: Array<String>){
+		private fun updateText(response: Array<String>) {
 			showTime.text = response[0]
 			nextCount.text = response[1]
 			maxValue.text = response[2]
@@ -61,19 +59,19 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 	override fun onCreateViewHolder(
 		parent: ViewGroup,
 		viewType: Int
-	): TimerItemAdapter.CustomTimerViewHolder {
+	): CustomTimerViewHolder {
 		val view = LayoutInflater.from(parent.context)
 			.inflate(R.layout.card_timer, parent, false)
 		return CustomTimerViewHolder(view, onClick)
 	}
 
-	override fun onBindViewHolder(holder: TimerItemAdapter.CustomTimerViewHolder, position: Int) {
+	override fun onBindViewHolder(holder: CustomTimerViewHolder, position: Int) {
 		val timer = getItem(position)
 		holder.bind(timer)
 	}
 }
 
-object CustomTimerDiffCallback: DiffUtil.ItemCallback<CustomTimer>() {
+object CustomTimerDiffCallback : DiffUtil.ItemCallback<CustomTimer>() {
 	override fun areItemsTheSame(oldItem: CustomTimer, newItem: CustomTimer): Boolean {
 		return oldItem == newItem
 	}

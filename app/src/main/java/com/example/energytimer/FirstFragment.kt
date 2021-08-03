@@ -25,7 +25,7 @@ class FirstFragment : Fragment() {
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
-	): View? {
+	): View {
 		_binding = FragmentFirstBinding.inflate(inflater, container, false)
 		val timerAdapter = TimerItemAdapter { timer -> adapterOnClick(timer) }
 		val currentList: List<CustomTimer> = getData()
@@ -49,6 +49,7 @@ class FirstFragment : Fragment() {
 	}
 
 	private fun adapterOnClick(flower: CustomTimer) {
+		Help.printLog("fragment-1",flower.toString())
 //        val intent = Intent(this, FlowerDetailActivity()::class.java)
 //        intent.putExtra(FLOWER_ID, flower.id)
 //        startActivity(intent)
@@ -58,16 +59,15 @@ class FirstFragment : Fragment() {
 		val currentDate: Long = Date().time
 		val maxValue = 160
 		val currentTic = 480
-		val customList: MutableCollection<CustomTimer> = mutableListOf();
+		val customList: MutableCollection<CustomTimer> = mutableListOf()
 		val randomValues = List(3) { nextInt(0, maxValue) }
 		for (i in randomValues) {
-			var startDate = currentDate
-			var finishDate = currentDate + ((maxValue - i) * currentTic * 1000)
+			val finishDate = currentDate + ((maxValue - i) * currentTic * 1000)
 			Help.printLog(
 				"Factory",
 				"Timer $i | " +
 						"${Date(finishDate)} $finishDate ${(maxValue - i) * currentTic * 1000} |" +
-						"${(finishDate - startDate) / currentTic}"
+						"${(finishDate - currentDate) / currentTic}"
 			)
 			customList.add(
 				CustomTimer(
@@ -76,7 +76,7 @@ class FirstFragment : Fragment() {
 					"des-$i",
 					i,
 					maxValue, currentTic,
-					startDate,
+					currentDate,
 					finishDate
 				)
 			)
