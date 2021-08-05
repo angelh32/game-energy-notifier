@@ -2,6 +2,7 @@ package com.example.energytimer.tools
 
 import android.os.CountDownTimer
 import com.example.energytimer.database.CustomTimer
+import com.example.energytimer.tools.Help.Companion.formatFromMilliseconds
 import java.util.*
 
 class IncrementByTicTimer(
@@ -44,24 +45,6 @@ class IncrementByTicTimer(
 		)
 	}
 
-	private fun formatFromMilliseconds(timeLeft: Long):String{
-		val valuesArray: Array<Long> = arrayOf(
-			timeLeft / (24 * 60 * 60 * 1000), // days
-			timeLeft / (60 * 60 * 1000) % 24, // hours
-			timeLeft / (60 * 1000) % 60, // minutes
-			timeLeft / 1000 % 60, // seconds
-		)
-		var response=""
-		for (i in valuesArray) {
-			if (i > 0 || response != "") {
-				response += String.format("%02d:", i)
-			}
-		}
-		if(response.isNotEmpty()) {
-			response = response.substring(0, response.length - 1)
-		}
-		return response
-	}
 
 	fun startTimer() {
 		cTimer = object: CountDownTimer(timeNextTic, 1000) {

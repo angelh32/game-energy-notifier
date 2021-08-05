@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.energytimer.adapters.TimerItemAdapter
@@ -41,6 +42,7 @@ class FirstFragment : Fragment() {
 		timerAdapter.submitList(currentList)
 		recyclerView = binding.recyclerViewTimers
 		recyclerView.adapter = timerAdapter
+		recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
 		return binding.root
 	}
 
@@ -74,11 +76,13 @@ class FirstFragment : Fragment() {
 
 	private fun adapterOnClick(flower: CustomTimer) {
 		Help.printLog("fragment-1", flower.toString())
+
 //        val intent = Intent(this, FlowerDetailActivity()::class.java)
 //        intent.putExtra(FLOWER_ID, flower.id)
 //        startActivity(intent)
 	}
 
+	// TODO: 8/5/21 Add logic of database and factory and delete generator
 	private fun getData(): List<CustomTimer> {
 		val currentDate: Long = Date().time
 		val maxValue = 160

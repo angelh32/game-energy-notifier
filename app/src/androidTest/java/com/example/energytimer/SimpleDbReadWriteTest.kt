@@ -30,7 +30,7 @@ class SimpleDbReadWriteTest {
 		val context = ApplicationProvider.getApplicationContext<Context>()
 		db = Room.inMemoryDatabaseBuilder(context, LocalDatabase::class.java).build()
 		customType =
-			TimerType(1, "game","type-1", 160, 480)
+			TimerType(1, "game","type-1", "", 160, 480)
 		customTimer =
 			CustomTimer(1, 1, "timer-1", "description", 1, 160, 480, Date().time, Date().time)
 		timerDao = db.customTimerDao()

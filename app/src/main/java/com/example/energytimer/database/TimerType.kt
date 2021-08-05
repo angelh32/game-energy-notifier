@@ -7,6 +7,7 @@ data class TimerType(
 	@PrimaryKey(autoGenerate = true) var typeId: Int,
 	@ColumnInfo() var gameName: String,
 	@ColumnInfo() var typeName: String,
+	@ColumnInfo() var description: String,
 	@ColumnInfo() var max: Int,
 	@ColumnInfo() var tic: Int,
 )

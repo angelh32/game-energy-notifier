@@ -79,7 +79,7 @@ class ShowTypeFragment : DialogFragment() {
 		val timerDao: TimerTypeDao = db.timerTypeDao()
 		val fromDb = timerDao.findById(typeId)
 		if (fromDb == null) {
-			current = TimerType(0, "", "", 0, 0)
+			current = TimerType(0, "", "", "", 0, 0)
 		} else {
 			current = fromDb
 		}

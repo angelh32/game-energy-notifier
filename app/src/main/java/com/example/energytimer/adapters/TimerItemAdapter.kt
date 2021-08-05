@@ -32,7 +32,7 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 			}
 		}
 
-		/* Bind flower name and image. */
+
 		fun bind(timer: CustomTimer) {
 			currentTimer = timer
 			val myTimer = IncrementByTicTimer(currentTimer) { timeLeft -> updateText(timeLeft) }
