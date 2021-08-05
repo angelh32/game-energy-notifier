@@ -20,15 +20,16 @@ import kotlin.concurrent.thread
 class ShowTypeFragment : DialogFragment() {
 	lateinit var db: LocalDatabase
 	lateinit var current: TimerType
+	var currentId = 0
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 		val bundle = arguments
 		return activity?.let {
 			val builder = AlertDialog.Builder(it)
 			val inflater = requireActivity().layoutInflater
 			if (bundle != null) {
-				val cuurentId = bundle.getInt("current")
-				getCurrent(requireContext(), cuurentId)
+				currentId = bundle.getInt("current")
 			}
+			getCurrent(requireContext())
 			val view = inflater.inflate(R.layout.fragment_dialog_create_type, null)
 			val timerNameText = view.findViewById<EditText>(R.id.type_name)
 			val gameNameText = view.findViewById<EditText>(R.id.game_name)
@@ -68,7 +69,7 @@ class ShowTypeFragment : DialogFragment() {
 		}
 	}
 
-	fun getCurrent(context: Context, typeId: Int) {
+	fun getCurrent(context: Context) {
 		db = Room.databaseBuilder(
 			context,
 			LocalDatabase::class.java,
@@ -77,7 +78,7 @@ class ShowTypeFragment : DialogFragment() {
 			.allowMainThreadQueries()
 			.build()
 		val timerDao: TimerTypeDao = db.timerTypeDao()
-		val fromDb = timerDao.findById(typeId)
+		val fromDb = timerDao.findById(currentId)
 		if (fromDb == null) {
 			current = TimerType(0, "", "", "", 0, 0)
 		} else {

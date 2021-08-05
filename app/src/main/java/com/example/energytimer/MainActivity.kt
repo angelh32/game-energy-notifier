@@ -34,14 +34,6 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		return when (item.itemId) {
-			R.id.add_type -> {
-				val newFragment = ShowTypeFragment()
-				val bundle = Bundle()
-				bundle.putInt("current", 1)
-				newFragment.arguments = bundle
-				newFragment.show(supportFragmentManager, "missiles")
-				return true
-			}
 			R.id.action_settings -> {
 				findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_FirstFragment_to_SecondFragment)
 				return true

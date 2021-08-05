@@ -2,10 +2,13 @@ package com.example.energytimer.database
 
 import androidx.room.*
 
-@Entity(foreignKeys = [ForeignKey(entity = TimerType::class,
-	parentColumns = arrayOf("typeId"),
-	childColumns = arrayOf("typeId"),
-	onDelete = ForeignKey.CASCADE)]
+@Entity(
+	foreignKeys = [ForeignKey(
+		entity = TimerType::class,
+		parentColumns = arrayOf("typeId"),
+		childColumns = arrayOf("typeId"),
+		onDelete = ForeignKey.CASCADE
+	)]
 )
 data class CustomTimer(
 	@PrimaryKey(autoGenerate = true) var timerId: Int,
@@ -32,6 +35,9 @@ data class TimerWithType(
 interface CustomTimerDao {
 	@Query("SELECT * FROM CustomTimer")
 	fun getAll(): List<CustomTimer>
+
+	@Query("SELECT * FROM CustomTimer WHERE timerId=:timerId LIMIT 1")
+	fun findById(timerId: Int): CustomTimer
 
 	@Transaction
 	@Query("SELECT * FROM CustomTimer WHERE timerId=:timerId LIMIT 1")

@@ -12,6 +12,7 @@ import com.example.energytimer.adapters.TypeItemAdapter
 import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.database.TimerType
 import com.example.energytimer.databinding.FragmentSecondBinding
+import com.example.energytimer.fragment.ShowTypeFragment
 import com.example.energytimer.tools.DatabaseName
 import com.example.energytimer.tools.Help
 import kotlinx.coroutines.runBlocking
@@ -23,9 +24,6 @@ import kotlin.concurrent.thread
 class SecondFragment : Fragment() {
 
 	private var _binding: FragmentSecondBinding? = null
-
-	// This property is only valid between onCreateView and
-	// onDestroyView.
 	private val binding get() = _binding!!
 	private lateinit var db: LocalDatabase
 	private var currentList: List<TimerType> = listOf()
@@ -73,9 +71,14 @@ class SecondFragment : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		insert_types()
+		binding.createType.setOnClickListener { view ->
+			val newFragment = ShowTypeFragment()
+			newFragment.show(parentFragmentManager, "")
+		}
 	}
 
 	override fun onDestroyView() {
+		db.close()
 		super.onDestroyView()
 		_binding = null
 	}
