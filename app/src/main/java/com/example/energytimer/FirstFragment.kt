@@ -14,7 +14,6 @@ import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.databinding.FragmentFirstBinding
 import com.example.energytimer.fragment.ShowTimerFragment
 import com.example.energytimer.tools.DatabaseName
-import com.example.energytimer.tools.Help
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
 
@@ -77,12 +76,12 @@ class FirstFragment : Fragment() {
 		_binding = null
 	}
 
-	private fun adapterOnClick(flower: CustomTimer) {
-		Help.printLog("fragment-1", flower.toString())
-		
-//        val intent = Intent(this, FlowerDetailActivity()::class.java)
-//        intent.putExtra(FLOWER_ID, flower.id)
-//        startActivity(intent)
+	private fun adapterOnClick(customTimer: CustomTimer) {
+		val newFragment = ShowTimerFragment()
+		val bundle = Bundle()
+		bundle.putInt("current", customTimer.timerId)
+		newFragment.arguments = bundle
+		newFragment.show(parentFragmentManager, "")
 	}
 
 }

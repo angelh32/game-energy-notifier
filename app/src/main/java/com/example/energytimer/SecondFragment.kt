@@ -14,7 +14,6 @@ import com.example.energytimer.database.TimerType
 import com.example.energytimer.databinding.FragmentSecondBinding
 import com.example.energytimer.fragment.ShowTypeFragment
 import com.example.energytimer.tools.DatabaseName
-import com.example.energytimer.tools.Help
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
 
@@ -48,11 +47,12 @@ class SecondFragment : Fragment() {
 		return binding.root
 	}
 
-	private fun adapterOnClick(flower: TimerType) {
-		Help.printLog("fragment-1", flower.toString())
-//        val intent = Intent(this, FlowerDetailActivity()::class.java)
-//        intent.putExtra(FLOWER_ID, flower.id)
-//        startActivity(intent)
+	private fun adapterOnClick(timerType: TimerType) {
+		val newFragment = ShowTypeFragment()
+		val bundle = Bundle()
+		bundle.putInt("current", timerType.typeId)
+		newFragment.arguments = bundle
+		newFragment.show(parentFragmentManager, "")
 	}
 
 	fun insert_types() = runBlocking {
