@@ -28,7 +28,6 @@ class FirstFragment : Fragment() {
 	private var currentList: List<CustomTimer> = listOf()
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var timerAdapter: TimerItemAdapter
-	val DIALOG_FRAGMENT = 1
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +63,7 @@ class FirstFragment : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		insert()
-		binding.createTimer.setOnClickListener { view ->
+		binding.createTimer.setOnClickListener {
 			val newFragment = ShowTimerFragment()
 			newFragment.show(parentFragmentManager, "")
 		}

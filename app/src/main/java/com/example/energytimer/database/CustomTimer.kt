@@ -12,14 +12,14 @@ import androidx.room.*
 )
 data class CustomTimer(
 	@PrimaryKey(autoGenerate = true) var timerId: Int,
-	@ColumnInfo() var typeId: Int,
-	@ColumnInfo() val timerName: String,
-	@ColumnInfo() val description: String,
-	@ColumnInfo() val initial: Int,
-	@ColumnInfo() val max: Int,
-	@ColumnInfo() val tic: Int,
-	@ColumnInfo() var startDate: Long,
-	@ColumnInfo() var finishDate: Long,
+	@ColumnInfo var typeId: Int,
+	@ColumnInfo val timerName: String,
+	@ColumnInfo val description: String,
+	@ColumnInfo val initial: Int,
+	@ColumnInfo val max: Int,
+	@ColumnInfo val tic: Int,
+	@ColumnInfo var startDate: Long,
+	@ColumnInfo var finishDate: Long,
 )
 
 data class TimerWithType(
@@ -52,3 +52,4 @@ interface CustomTimerDao {
 	@Delete
 	fun delete(customTimer: CustomTimer)
 }
+

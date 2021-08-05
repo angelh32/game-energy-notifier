@@ -17,6 +17,7 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 	ListAdapter<CustomTimer, TimerItemAdapter.CustomTimerViewHolder>(CustomTimerDiffCallback) {
 	class CustomTimerViewHolder(itemView: View, val onClick: (CustomTimer) -> Unit) :
 		RecyclerView.ViewHolder(itemView) {
+
 		private val timerName: TextView = itemView.findViewById(R.id.type_name)
 		private val description: TextView = itemView.findViewById(R.id.description)
 		private val startDateText: TextView = itemView.findViewById(R.id.start_date)

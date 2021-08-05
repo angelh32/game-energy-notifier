@@ -36,6 +36,7 @@ class HelpTest {
 		val formattedTime = parseMillisecondsFromString("01:00:00:00")
 		Assert.assertEquals(86400000, formattedTime)
 	}
+
 	@Test
 	fun parse_hour_from_string() {
 		val formattedTime = parseMillisecondsFromString("01:00:00")

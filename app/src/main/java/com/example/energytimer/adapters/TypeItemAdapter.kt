@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.energytimer.R
 import com.example.energytimer.database.TimerType
 import com.example.energytimer.tools.Help
-import java.text.SimpleDateFormat
-import java.util.*
 
 class TypeItemAdapter(private val onClick: (TimerType) -> Unit) :
 	ListAdapter<TimerType, TypeItemAdapter.TimerTypeViewHolder>(TimerTypeDiffCallback) {
@@ -20,7 +18,7 @@ class TypeItemAdapter(private val onClick: (TimerType) -> Unit) :
 
 		private val typeName: TextView = itemView.findViewById(R.id.type_name)
 		private val typeDescription: TextView = itemView.findViewById(R.id.type_description)
-		private val typeMax : TextView = itemView.findViewById(R.id.type_max)
+		private val typeMax: TextView = itemView.findViewById(R.id.type_max)
 		private val typeTic: TextView = itemView.findViewById(R.id.type_tic)
 
 		private lateinit var currentType: TimerType

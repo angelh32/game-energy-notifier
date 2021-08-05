@@ -20,10 +20,10 @@ import kotlin.concurrent.thread
 
 
 class ShowTimerFragment : DialogFragment() {
-	lateinit var db: LocalDatabase
-	lateinit var current: CustomTimer
-	lateinit var typesList: List<TimerType>
-	var currentId = 0
+	private lateinit var db: LocalDatabase
+	private lateinit var current: CustomTimer
+	private lateinit var typesList: List<TimerType>
+	private var currentId = 0
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 		val bundle = arguments
 		return activity?.let {
@@ -35,7 +35,7 @@ class ShowTimerFragment : DialogFragment() {
 			getCurrent(requireContext())
 			val view = inflater.inflate(R.layout.fragment_dialog_create_timer, null)
 
-			/* ----------- Dinamic elements ----------- */
+			/* ----------- Dynamic elements ----------- */
 			val gameSpinner = view.findViewById<Spinner>(R.id.game_spinner)
 			val timerTypeSpinner = view.findViewById<Spinner>(R.id.timer_type_spinner)
 			val timerName = view.findViewById<EditText>(R.id.timer_name)
@@ -71,8 +71,8 @@ class ShowTimerFragment : DialogFragment() {
 			timerTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 				override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
 					selectedType = typeList[pos]
-					currentValue.setProgress(current.initial)
-					currentValue.setMax(selectedType.max)
+					currentValue.progress = current.initial
+					currentValue.max = selectedType.max
 				}
 
 				override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -102,8 +102,8 @@ class ShowTimerFragment : DialogFragment() {
 					val initialValue = seekBarValue.text.toString().toInt()
 					val max = selectedType.max
 					val tic = selectedType.tic
-					val startdate = Date().time
-					val finishDate = startdate + (initialValue * tic * 1000)
+					val startDate = Date().time
+					val finishDate = startDate + (initialValue * tic * 1000)
 					saveCurrent(
 						CustomTimer(
 							0,
@@ -113,7 +113,7 @@ class ShowTimerFragment : DialogFragment() {
 							initialValue,
 							max,
 							tic,
-							startdate,
+							startDate,
 							finishDate
 						)
 					)
@@ -123,7 +123,7 @@ class ShowTimerFragment : DialogFragment() {
 					getDialog()?.cancel()
 				}
 				.setNegativeButton(R.string.start) { dialog, id ->
-					Help.printLog("Type", "negatinve")
+					Help.printLog("Type", "negative")
 					getDialog()?.cancel()
 				}
 			builder.create()
@@ -135,14 +135,14 @@ class ShowTimerFragment : DialogFragment() {
 		super.onDestroy()
 	}
 
-	fun saveCurrent(current: CustomTimer) = runBlocking {
+	private fun saveCurrent(current: CustomTimer) = runBlocking {
 		thread {
 			val timerDao = db.customTimerDao()
 			timerDao.insertAll(current)
 		}
 	}
 
-	fun getCurrent(context: Context) {
+	private fun getCurrent(context: Context) {
 		db = Room.databaseBuilder(
 			context,
 			LocalDatabase::class.java,
@@ -154,10 +154,10 @@ class ShowTimerFragment : DialogFragment() {
 		val typeDao = db.timerTypeDao()
 		typesList = typeDao.getAll()
 		val fromDb = timerDao.findById(currentId)
-		if (fromDb == null) {
-			current = CustomTimer(0, 0, "", "", 0, 0, 0, 0, 0)
+		current = if (fromDb == null) {
+			CustomTimer(0, 0, "", "", 0, 0, 0, 0, 0)
 		} else {
-			current = fromDb
+			fromDb
 		}
 	}
 //	companion object {

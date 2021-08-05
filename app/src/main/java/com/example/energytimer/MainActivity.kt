@@ -9,7 +9,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.energytimer.databinding.ActivityMainBinding
-import com.example.energytimer.fragment.ShowTypeFragment
 
 class MainActivity : AppCompatActivity() {
 

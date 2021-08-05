@@ -18,9 +18,9 @@ import kotlin.concurrent.thread
 
 
 class ShowTypeFragment : DialogFragment() {
-	lateinit var db: LocalDatabase
-	lateinit var current: TimerType
-	var currentId = 0
+	private lateinit var db: LocalDatabase
+	private lateinit var current: TimerType
+	private var currentId = 0
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 		val bundle = arguments
 		return activity?.let {
@@ -35,8 +35,8 @@ class ShowTypeFragment : DialogFragment() {
 			val gameNameText = view.findViewById<EditText>(R.id.game_name)
 			val maxValue = view.findViewById<EditText>(R.id.max_value)
 			val tic = view.findViewById<EditText>(R.id.tic)
-			timerNameText.setText("${current.typeName}")
-			gameNameText.setText("${current.gameName}")
+			timerNameText.setText(current.typeName)
+			gameNameText.setText(current.gameName)
 			maxValue.setText("${current.max}")
 			tic.setText("${current.tic}")
 
@@ -62,14 +62,14 @@ class ShowTypeFragment : DialogFragment() {
 		} ?: throw IllegalStateException("Activity cannot be null")
 	}
 
-	fun saveCurrent(current: TimerType) = runBlocking {
+	private fun saveCurrent(current: TimerType) = runBlocking {
 		thread {
 			val timerDao: TimerTypeDao = db.timerTypeDao()
 			timerDao.insertAll(current)
 		}
 	}
 
-	fun getCurrent(context: Context) {
+	private fun getCurrent(context: Context) {
 		db = Room.databaseBuilder(
 			context,
 			LocalDatabase::class.java,

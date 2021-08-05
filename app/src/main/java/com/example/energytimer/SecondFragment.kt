@@ -55,7 +55,7 @@ class SecondFragment : Fragment() {
 		newFragment.show(parentFragmentManager, "")
 	}
 
-	fun insert_types() = runBlocking {
+	private fun insertTypes() = runBlocking {
 		thread {
 			db = Room.databaseBuilder(
 				requireContext(),
@@ -70,8 +70,8 @@ class SecondFragment : Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		insert_types()
-		binding.createType.setOnClickListener { view ->
+		insertTypes()
+		binding.createType.setOnClickListener {
 			val newFragment = ShowTypeFragment()
 			newFragment.show(parentFragmentManager, "")
 		}
