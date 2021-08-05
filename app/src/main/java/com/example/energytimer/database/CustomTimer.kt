@@ -2,17 +2,30 @@ package com.example.energytimer.database
 
 import androidx.room.*
 
-@Entity
+@Entity(foreignKeys = [ForeignKey(entity = TimerType::class,
+	parentColumns = arrayOf("typeId"),
+	childColumns = arrayOf("typeId"),
+	onDelete = ForeignKey.CASCADE)]
+)
 data class CustomTimer(
-	@PrimaryKey(autoGenerate = true) val tid: Int,
-	val typeId: Int,
-	@ColumnInfo(name = "timer_name") val timerName: String,
-	@ColumnInfo(name = "description") val description: String,
-	@ColumnInfo(name = "initial") val initial: Int,
-	@ColumnInfo(name = "max") val max: Int,
-	@ColumnInfo(name = "tic") val tic: Int,
-	@ColumnInfo(name = "start_date") var startDate: Long,
-	@ColumnInfo(name = "finish_date") var finishDate: Long,
+	@PrimaryKey(autoGenerate = true) var timerId: Int,
+	@ColumnInfo() var typeId: Int,
+	@ColumnInfo() val timerName: String,
+	@ColumnInfo() val description: String,
+	@ColumnInfo() val initial: Int,
+	@ColumnInfo() val max: Int,
+	@ColumnInfo() val tic: Int,
+	@ColumnInfo() var startDate: Long,
+	@ColumnInfo() var finishDate: Long,
+)
+
+data class TimerWithType(
+	@Embedded val timer: CustomTimer,
+	@Relation(
+		parentColumn = "typeId",
+		entityColumn = "typeId"
+	)
+	val type: TimerType
 )
 
 @Dao
@@ -20,11 +33,12 @@ interface CustomTimerDao {
 	@Query("SELECT * FROM CustomTimer")
 	fun getAll(): List<CustomTimer>
 
-	@Query("SELECT * FROM CustomTimer WHERE tid IN (:timerIds)")
-	fun loadAllByIds(timerIds: IntArray): List<CustomTimer>
+	@Transaction
+	@Query("SELECT * FROM CustomTimer WHERE timerId=:timerId LIMIT 1")
+	fun timerWithType(timerId: Int): TimerWithType
 
-	@Query("SELECT * FROM CustomTimer WHERE timer_name LIKE :timerName")
-	fun findByName(timerName: String): CustomTimer
+	@Query("DELETE FROM CustomTimer")
+	fun deleteAll(): Int
 
 	@Insert
 	fun insertAll(vararg customTimers: CustomTimer)

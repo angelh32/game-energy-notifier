@@ -13,7 +13,7 @@
             android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/timer_name"
+                    android:id="@+id/type_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -28,8 +28,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Description"
-                    card_view:layout_constraintStart_toStartOf="@+id/timer_name"
-                    card_view:layout_constraintTop_toBottomOf="@+id/timer_name" />
+                    card_view:layout_constraintStart_toStartOf="@+id/type_name"
+                    card_view:layout_constraintTop_toBottomOf="@+id/type_name" />
 
                 <TextView
                     android:id="@+id/start_date"
