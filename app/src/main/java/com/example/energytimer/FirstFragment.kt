@@ -1,17 +1,23 @@
 package com.example.energytimer
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.energytimer.adapters.TimerItemAdapter
 import com.example.energytimer.database.CustomTimer
+import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.databinding.FragmentFirstBinding
+import com.example.energytimer.tools.DatabaseName
 import com.example.energytimer.tools.Help
+import kotlinx.coroutines.runBlocking
 import java.util.*
+import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextInt
 
 /**
@@ -21,25 +27,43 @@ class FirstFragment : Fragment() {
 
 	private var _binding: FragmentFirstBinding? = null
 	private val binding get() = _binding!!
+	private lateinit var db: LocalDatabase
+	private var currentList: List<CustomTimer> = listOf()
+	private lateinit var recyclerView: RecyclerView
+	private lateinit var timerAdapter: TimerItemAdapter
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
 		_binding = FragmentFirstBinding.inflate(inflater, container, false)
-		val timerAdapter = TimerItemAdapter { timer -> adapterOnClick(timer) }
-		val currentList: List<CustomTimer> = getData()
+		timerAdapter = TimerItemAdapter { timer -> adapterOnClick(timer) }
 		timerAdapter.submitList(currentList)
-		val recyclerView: RecyclerView = binding.recyclerView
+		recyclerView = binding.recyclerViewTimers
 		recyclerView.adapter = timerAdapter
 		return binding.root
+	}
 
+	fun insert() = runBlocking {
+		thread {
+			db = Room.databaseBuilder(
+				requireContext(),
+				LocalDatabase::class.java,
+				DatabaseName
+			).build()
+			val timerDao = db.customTimerDao()
+			val currentList = timerDao.getAll()
+			timerAdapter.submitList(currentList)
+		}
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		binding.buttonFirst.setOnClickListener {
-			findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+		insert()
+		binding.createTimer.setOnClickListener { view ->
+			val myToast = Toast.makeText(context,"toast message with gravity",Toast.LENGTH_SHORT)
+			myToast.setGravity(Gravity.LEFT,200,200)
+			myToast.show()
 		}
 	}
 
@@ -49,7 +73,7 @@ class FirstFragment : Fragment() {
 	}
 
 	private fun adapterOnClick(flower: CustomTimer) {
-		Help.printLog("fragment-1",flower.toString())
+		Help.printLog("fragment-1", flower.toString())
 //        val intent = Intent(this, FlowerDetailActivity()::class.java)
 //        intent.putExtra(FLOWER_ID, flower.id)
 //        startActivity(intent)
@@ -72,6 +96,7 @@ class FirstFragment : Fragment() {
 			customList.add(
 				CustomTimer(
 					i,
+					1,
 					"resin-$i",
 					"des-$i",
 					i,

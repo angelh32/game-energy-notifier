@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="240dp"
+    android:layout_height="320dp">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:labelFor="@id/type_name"
+        android:text="@string/timer_name"
+        app:layout_constraintBottom_toBottomOf="@+id/type_name"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/type_name"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:autofillHints="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:labelFor="@id/game_name"
+        android:text="@string/game_name"
+        app:layout_constraintBottom_toBottomOf="@+id/game_name"
+        app:layout_constraintStart_toStartOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/game_name"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:autofillHints="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="@+id/type_name"
+        app:layout_constraintTop_toBottomOf="@+id/type_name" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:labelFor="@id/max_value"
+        android:text="@string/max_value"
+        app:layout_constraintBottom_toBottomOf="@+id/max_value"
+        app:layout_constraintStart_toStartOf="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/max_value"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:autofillHints="no"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="@+id/game_name"
+        app:layout_constraintTop_toBottomOf="@+id/game_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:labelFor="@id/tic"
+        android:text="@string/tic"
+        app:layout_constraintBottom_toBottomOf="@+id/tic"
+        app:layout_constraintStart_toStartOf="@+id/textView4" />
+
+    <EditText
+        android:id="@+id/tic"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:autofillHints="no"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="@+id/max_value"
+        app:layout_constraintTop_toBottomOf="@+id/max_value" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

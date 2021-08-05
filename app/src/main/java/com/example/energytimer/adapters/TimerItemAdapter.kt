@@ -17,7 +17,7 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 	ListAdapter<CustomTimer, TimerItemAdapter.CustomTimerViewHolder>(CustomTimerDiffCallback) {
 	class CustomTimerViewHolder(itemView: View, val onClick: (CustomTimer) -> Unit) :
 		RecyclerView.ViewHolder(itemView) {
-		private val timerName: TextView = itemView.findViewById(R.id.timer_name)
+		private val timerName: TextView = itemView.findViewById(R.id.type_name)
 		private val description: TextView = itemView.findViewById(R.id.description)
 		private val startDateText: TextView = itemView.findViewById(R.id.start_date)
 		private val finishDateText: TextView = itemView.findViewById(R.id.finish_date)
@@ -77,7 +77,7 @@ object CustomTimerDiffCallback : DiffUtil.ItemCallback<CustomTimer>() {
 	}
 
 	override fun areContentsTheSame(oldItem: CustomTimer, newItem: CustomTimer): Boolean {
-		return oldItem.tid == newItem.tid
+		return oldItem.timerId == newItem.timerId
 	}
 
 }

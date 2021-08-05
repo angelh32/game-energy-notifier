@@ -20,6 +20,7 @@ class IncrementByTimerTest {
 		val finishDate = currentDate + ((maxValue - currentCount) * ticTime * 1000)
 		timer = CustomTimer(
 			1,
+			1,
 			"timer-1",
 			"description",
 			currentCount,
