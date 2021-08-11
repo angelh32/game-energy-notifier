@@ -6,123 +6,76 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.energytimer.R
-import com.example.energytimer.database.TimerType
 import com.example.energytimer.tools.Help
-import java.util.*
+import com.example.energytimer.tools.IncrementByTicTimer
 
 
 class ShowTimerFragment : DialogFragment() {
 	// UI elements
 	private lateinit var dialogView: View
-	private lateinit var gameSpinner: Spinner
-	private lateinit var timerTypeSpinner: Spinner
-	private lateinit var timerName: EditText
-	private lateinit var timerDescription: EditText
-	private lateinit var currentValue: SeekBar
-	private lateinit var seekBarValue: TextView
-
-	// adapters
-	private lateinit var gameListAdapter: ArrayAdapter<String>
-	private lateinit var typesListAdapter: ArrayAdapter<String>
+	private lateinit var totalTime: TextView
+	private lateinit var currentValue: TextView
+	private lateinit var currentTime: TextView
+	private lateinit var maxValue: TextView
+	private lateinit var timeGenerate: TextView
+	private lateinit var startDate: TextView
+	private lateinit var finishDate: TextView
+	private lateinit var timerName: TextView
+	private lateinit var gameName: TextView
+	private lateinit var timerDescription: TextView
 
 	// Shared data
 	private val model: SharedData by activityViewModels()
-	private lateinit var allTypes: List<TimerType>
-	private lateinit var gamesForSpinnerLabels: List<String>
-	private lateinit var typesForSpinner: List<TimerType>
-	private lateinit var typesForSpinnerLabels: List<String>
-	private lateinit var selectedType: TimerType
 
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 		return activity?.let {
 			val builder = AlertDialog.Builder(it)
 			val inflater = requireActivity().layoutInflater
 			/* ----------- Dynamic elements ----------- */
-			dialogView = inflater.inflate(R.layout.fragment_dialog_create_timer, null)
-			gameSpinner = dialogView.findViewById(R.id.game_spinner)
-			timerTypeSpinner = dialogView.findViewById(R.id.timer_type_spinner)
-			timerName = dialogView.findViewById(R.id.timer_name)
-			timerDescription = dialogView.findViewById(R.id.timer_description)
-			currentValue = dialogView.findViewById(R.id.initial_value)
-			seekBarValue = dialogView.findViewById(R.id.seekbar_value)
-
-			gameListAdapter = ArrayAdapter(
-				requireContext(),
-				android.R.layout.simple_spinner_dropdown_item,
-				arrayListOf()
-			)
-			gameSpinner.adapter = gameListAdapter
-
-			typesListAdapter = ArrayAdapter(
-				requireContext(),
-				android.R.layout.simple_spinner_dropdown_item,
-				arrayListOf()
-			)
-			timerTypeSpinner.adapter = typesListAdapter
-
-			gameSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-				override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-					val selectedGame = gamesForSpinnerLabels[pos]
-					typesForSpinner = allTypes.filter { item -> item.gameName.equals(selectedGame) }
-					typesForSpinnerLabels = typesForSpinner.map { item -> item.typeName }
-					setListToSpinnerAdapter(typesListAdapter, typesForSpinnerLabels)
-				}
-
-				override fun onNothingSelected(parent: AdapterView<*>) {}
-			}
-			timerTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-				override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-					selectedType = typesForSpinner[pos]
-					currentValue.progress = 1
-					currentValue.max = selectedType.max
-					timerName.setText(selectedType.typeName)
-					timerDescription.setText(selectedType.description)
-				}
-
-				override fun onNothingSelected(parent: AdapterView<*>) {}
-			}
-			currentValue.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-				override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-					// Display the current progress of SeekBar
-					seekBarValue.text = "$i"
-				}
-
-				override fun onStartTrackingTouch(seekBar: SeekBar) {
-					// Do something
-				}
-
-				override fun onStopTrackingTouch(seekBar: SeekBar) {
-					// Do something
-				}
-			})
+			dialogView = inflater.inflate(R.layout.fragment_dialog_show_timer, null)
+			totalTime = dialogView.findViewById(R.id.st_total_time)
+			currentValue = dialogView.findViewById(R.id.st_current_value)
+			currentTime = dialogView.findViewById(R.id.st_current_time)
+			maxValue = dialogView.findViewById(R.id.st_max_value)
+			timeGenerate = dialogView.findViewById(R.id.st_time_generate)
+			startDate = dialogView.findViewById(R.id.st_start)
+			finishDate = dialogView.findViewById(R.id.st_finish)
+			timerName = dialogView.findViewById(R.id.st_timer_name)
+			gameName = dialogView.findViewById(R.id.st_game_name)
+			timerDescription = dialogView.findViewById(R.id.st_description)
 
 			builder.setView(dialogView)
-				.setTitle(R.string.add_new_timer)
-				.setPositiveButton(R.string.save) { dialog, id ->
+				.setPositiveButton(R.string.restart) { dialog, id ->
 					Help.printLog("Type", "Save")
 					var customTimer = Help.createEmptyTimer()
-//					customTimer.timerId = selectedType.typeId
-					customTimer.typeId = selectedType.typeId
-					customTimer.timerName = timerName.text.toString()
-					customTimer.description = timerDescription.text.toString()
-					customTimer.initial = seekBarValue.text.toString().toInt()
-					customTimer.max = selectedType.max
-					customTimer.tic = selectedType.tic
-					customTimer.startDate = Date().time
-					customTimer.finishDate = customTimer.startDate + ((customTimer.max-customTimer.initial) * customTimer.tic * 1000)
-					model.saveTimer(customTimer)
-					model.refreshTimers()
 				}
 				.setNeutralButton(R.string.edit) { dialog, id ->
+					EditTimerFragment().show(parentFragmentManager, "TIMER")
 					Help.printLog("Type", "cancel")
 					getDialog()?.cancel()
 				}
-				.setNegativeButton(R.string.start) { dialog, id ->
-					Help.printLog("Type", "negative")
+				.setNegativeButton(R.string.delete) { dialog, id ->
+					val alertDialog: AlertDialog = requireActivity().let {
+						val builder = AlertDialog.Builder(it)
+						builder.apply {
+							setMessage(R.string.delete_this_timer)
+							setPositiveButton(R.string.confirm) { dialog, id ->
+								model.deleteTimer(model.selectedTimer.value!!)
+								model.refreshTimers()
+							}
+							setNegativeButton(R.string.cancel) { dialog, id ->
+								getDialog()?.cancel()
+							}
+						}
+						builder.create()
+					}
+					if (alertDialog != null) {
+						alertDialog.show()
+					}
 					getDialog()?.cancel()
 				}
 			builder.create()
@@ -137,24 +90,27 @@ class ShowTimerFragment : DialogFragment() {
 		return dialogView
 	}
 
-	fun setListToSpinnerAdapter(adapter: ArrayAdapter<String>, list: List<String>) {
-		adapter.clear()
-		adapter.addAll(list)
-	}
-
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		allTypes = model.typelist.value!!
-		val games = allTypes.map { item -> item.gameName }
-		gamesForSpinnerLabels = games.toSet().toList()
-		setListToSpinnerAdapter(gameListAdapter, gamesForSpinnerLabels)
-		val types = allTypes.map { item -> item.typeName }
-		typesForSpinnerLabels = types.toSet().toList()
-		setListToSpinnerAdapter(typesListAdapter, typesForSpinnerLabels)
 		model.selectedTimer.observe(viewLifecycleOwner, { timer ->
-			currentValue.progress = 1
-			currentValue.max = timer.max
-			timerName.setText(timer.timerName)
-			timerDescription.setText(timer.description)
+			val currentType = model.selectedType.value!!
+			val myTimer = IncrementByTicTimer(timer)
+			if (!myTimer.isTimerRunning) {
+				myTimer.startTimer()
+			}
+			myTimer.totalTimeLeftLabel.observe(viewLifecycleOwner, { label -> totalTime.text = label })
+			myTimer.currentTimeLabel.observe(viewLifecycleOwner, { label -> currentTime.text = label })
+			myTimer.totalGeneratedLabel.observe(
+				viewLifecycleOwner,
+				{ label -> currentValue.text = label })
+			timerName.text = timer.timerName
+			maxValue.text = currentType.max.toString()
+			timeGenerate.text = Help.formatFromSeconds(currentType.tic.toLong())
+			startDate.text = Help.formatFromLong(timer.startDate)
+			finishDate.text = Help.formatFromLong(timer.finishDate)
+			maxValue.text = currentType.max.toString()
+			timerName.text = timer.timerName
+			timerDescription.text = timer.description
+			gameName.text = currentType.gameName
 		})
 		super.onViewCreated(view, savedInstanceState)
 	}

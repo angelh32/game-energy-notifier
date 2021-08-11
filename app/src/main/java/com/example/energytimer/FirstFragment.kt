@@ -12,6 +12,7 @@ import com.example.energytimer.adapters.TimerItemAdapter
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.databinding.FragmentFirstBinding
 import com.example.energytimer.fragment.SharedData
+import com.example.energytimer.fragment.EditTimerFragment
 import com.example.energytimer.fragment.ShowTimerFragment
 import com.example.energytimer.tools.Help
 
@@ -53,7 +54,7 @@ class FirstFragment : Fragment() {
 		model.refreshTimers()
 		model.refreshTypes()
 		binding.createTimer.setOnClickListener {
-			val newFragment = ShowTimerFragment()
+			val newFragment = EditTimerFragment()
 			model.selectTimer(Help.createEmptyTimer())
 			newFragment.show(parentFragmentManager, "NEW_TIMER")
 		}
@@ -67,7 +68,7 @@ class FirstFragment : Fragment() {
 
 	private fun adapterOnClick(customTimer: CustomTimer) {
 		model.selectTimer(customTimer)
+		model.selectById(customTimer.typeId)
 		ShowTimerFragment().show(parentFragmentManager, "TIMER")
 	}
-
 }

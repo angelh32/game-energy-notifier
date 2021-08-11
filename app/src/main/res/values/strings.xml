@@ -19,7 +19,7 @@
     <string name="dialog_timer">Add new timer</string>
     <string name="timer_name">Name</string>
     <string name="timer_description">Description</string>
-    <string name="current_value">Initial value</string>
+    <string name="current_value">Current value</string>
     <string name="timer_type">Timer type</string>
     <string name="add_new_timer">Add new timer</string>
     <string name="type_list">Types List</string>
@@ -30,6 +30,16 @@
     <string name="type_description">Description</string>
     <string name="max_value">Max Value</string>
     <string name="tic">Time to generate</string>
+    <string name="close">Close</string>
+    <string name="restart">Restart</string>
+    <string name="delete">Delete</string>
+    <string name="current_time">Current Time</string>
+    <string name="total_time">Total Time</string>
+    <string name="finish_date">Finish Date</string>
+    <string name="start_date">Start Date</string>
+    <string name="time_to_generate">Time to generate</string>
+    <string name="confirm">Confirm</string>
+    <string name="delete_this_timer">Delete this timer</string>
 
     <!--    <string name=""></string>-->
 </resources>

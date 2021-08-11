@@ -3,6 +3,8 @@ package com.example.energytimer.tools
 import android.util.Log
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.database.TimerType
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Help {
 	companion object {
@@ -42,6 +44,12 @@ class Help {
 					return days + hours + minutes + seconds
 				}
 			}
+		}
+
+		fun formatFromLong(currentTime: Long): String{
+			val pattern = "MM-dd-yyyy hh:mm"
+			val simpleDateFormat = SimpleDateFormat(pattern, Locale.US)
+			return simpleDateFormat.format(Date(currentTime))
 		}
 
 		fun formatFromMilliseconds(timeLeft: Long): String {

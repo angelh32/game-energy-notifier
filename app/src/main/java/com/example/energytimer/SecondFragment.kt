@@ -12,7 +12,7 @@ import com.example.energytimer.adapters.TypeItemAdapter
 import com.example.energytimer.database.TimerType
 import com.example.energytimer.databinding.FragmentSecondBinding
 import com.example.energytimer.fragment.SharedData
-import com.example.energytimer.fragment.ShowTypeFragment
+import com.example.energytimer.fragment.EditTypeFragment
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -47,7 +47,7 @@ class SecondFragment : Fragment() {
 
 	private fun adapterOnClick(timerType: TimerType) {
 		model.selectType(timerType)
-		ShowTypeFragment().show(parentFragmentManager, "TYPE")
+		EditTypeFragment().show(parentFragmentManager, "TYPE")
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,7 +56,7 @@ class SecondFragment : Fragment() {
 		})
 		model.refreshTypes()
 		binding.createType.setOnClickListener {
-			val newFragment = ShowTypeFragment()
+			val newFragment = EditTypeFragment()
 			newFragment.show(parentFragmentManager, "")
 		}
 		super.onViewCreated(view, savedInstanceState)

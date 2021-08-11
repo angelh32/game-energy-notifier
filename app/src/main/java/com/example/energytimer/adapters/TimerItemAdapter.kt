@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.energytimer.R
 import com.example.energytimer.database.CustomTimer
+import com.example.energytimer.tools.Help
 import com.example.energytimer.tools.IncrementByTicTimer
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,13 +43,11 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 			}
 			timerName.text = timer.timerName
 			description.text = timer.description
-			val pattern = "MM-dd-yyyy hh:mm"
 			myTimer.totalTimeLeftLabel.observeForever { label -> showTime.setText(label) }
 			myTimer.currentTimeLabel.observeForever { label -> nextCount.setText(label) }
 			myTimer.totalGeneratedLabel.observeForever { label -> maxValue.setText(label) }
-			val simpleDateFormat = SimpleDateFormat(pattern, Locale.US)
-			startDateText.text = simpleDateFormat.format(Date(timer.startDate))
-			finishDateText.text = simpleDateFormat.format(Date(timer.finishDate))
+			startDateText.text = Help.formatFromLong(timer.finishDate)
+			finishDateText.text = Help.formatFromLong(timer.finishDate)
 		}
 	}
 

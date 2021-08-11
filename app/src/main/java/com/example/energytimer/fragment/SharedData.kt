@@ -29,6 +29,11 @@ class SharedData : ViewModel() {
 		selectedType.value = selected
 	}
 
+	fun selectById(typeId: Int) {
+		val selected = typelist.value!!.filter { item -> item.typeId == typeId }
+		selectedType.value = selected[0]
+	}
+
 	fun buildDatabase(context: Context) {
 		db = Room.databaseBuilder(
 			context,
@@ -63,8 +68,12 @@ class SharedData : ViewModel() {
 		val filter = current.filter { type -> type.typeId == id }
 		lateinit var returned: TimerType
 		if (filter.isNotEmpty()) {
-			returned=filter[0]
+			returned = filter[0]
 		}
 		return returned
+	}
+
+	fun deleteTimer(current: CustomTimer) {
+		timerDao.delete(current)
 	}
 }

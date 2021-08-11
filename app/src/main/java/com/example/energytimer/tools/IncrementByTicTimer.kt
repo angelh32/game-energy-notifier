@@ -25,11 +25,11 @@ class IncrementByTicTimer(currentTimer: CustomTimer) {
 	private fun refreshValues() {
 		val currentDate = Date().time
 		val stack = (currentDate - timer.startDate) / (timer.tic * 1000)
+		currentValue = timer.max
 		if (stack > timer.max) {
-			currentValue = timer.max
 			totalTimeLeftLabel.value = "Completed"
 			totalGeneratedLabel.value = String.format("%02d / %02d", currentValue, currentValue)
-			currentTimeLabel.value = "Completed"
+			currentTimeLabel.value = "-- : --"
 		} else {
 			currentValue = timer.initial + stack.toInt()
 			val timeLeft = timer.finishDate - currentDate
@@ -46,21 +46,12 @@ class IncrementByTicTimer(currentTimer: CustomTimer) {
 		}
 	}
 
-	fun formatAndReturn(timeLeft: Long): Array<String> {
-		return arrayOf(
-			formatFromMilliseconds(timeLeft + timeToFinish),
-			formatFromMilliseconds(timeLeft),
-			"$currentValue/${timer.max}"
-		)
-	}
-
-
 	fun startTimer() {
 		cTimer = object : CountDownTimer(timeNextTic, 1000) {
 			override fun onTick(timeLeft: Long) {
 				totalTimeLeftLabel.value = formatFromMilliseconds(timeLeft + timeToFinish)
-				totalGeneratedLabel.value = formatFromMilliseconds(timeLeft)
-				currentTimeLabel.value = "$currentValue/${timer.max}"
+				currentTimeLabel.value = formatFromMilliseconds(timeLeft)
+				totalGeneratedLabel.value = "$currentValue/${timer.max}"
 			}
 
 			override fun onFinish() {

@@ -39,6 +39,10 @@ interface CustomTimerDao {
 	@Query("SELECT * FROM CustomTimer WHERE timerId=:timerId LIMIT 1")
 	fun findById(timerId: Int): CustomTimer
 
+	@Query("UPDATE CustomTimer SET initial = :newInitial, startDate=:newStart, finishDate=:newFinish WHERE timerId =:id")
+	fun update(id: Int, newInitial: Int, newStart: Long, newFinish: Long)
+
+
 	@Transaction
 	@Query("SELECT * FROM CustomTimer WHERE timerId=:timerId LIMIT 1")
 	fun timerWithType(timerId: Int): TimerWithType
