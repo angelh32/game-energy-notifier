@@ -60,7 +60,7 @@ class SharedData : ViewModel() {
 	}
 
 	fun saveType(type: TimerType) {
-		typeDao.insertAll(type)
+		typeDao.insertType(type)
 	}
 
 	fun getTypeFromTypes(id: Int): TimerType {
@@ -75,5 +75,13 @@ class SharedData : ViewModel() {
 
 	fun deleteTimer(current: CustomTimer) {
 		timerDao.delete(current)
+	}
+
+	fun deleteType(current: TimerType) {
+		typeDao.deleteType(current)
+	}
+
+	fun updateType(timerType: TimerType) {
+		typeDao.updateType(timerType)
 	}
 }

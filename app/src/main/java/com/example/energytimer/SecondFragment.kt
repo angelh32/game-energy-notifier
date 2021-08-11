@@ -13,6 +13,7 @@ import com.example.energytimer.database.TimerType
 import com.example.energytimer.databinding.FragmentSecondBinding
 import com.example.energytimer.fragment.SharedData
 import com.example.energytimer.fragment.EditTypeFragment
+import com.example.energytimer.tools.Help
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -56,8 +57,8 @@ class SecondFragment : Fragment() {
 		})
 		model.refreshTypes()
 		binding.createType.setOnClickListener {
-			val newFragment = EditTypeFragment()
-			newFragment.show(parentFragmentManager, "")
+			model.selectedType.value= Help.createEmptyType()
+			EditTypeFragment().show(parentFragmentManager, "")
 		}
 		super.onViewCreated(view, savedInstanceState)
 	}

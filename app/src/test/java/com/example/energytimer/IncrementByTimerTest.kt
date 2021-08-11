@@ -51,14 +51,4 @@ class IncrementByTimerTest {
 		myTimer = IncrementByTicTimer(timer)
 		assertEquals(240, myTimer.timeNextTic / 1000)
 	}
-
-	@Test
-	fun create_existing_timer_has_correct_next_fist_value() {
-		timer.finishDate = timer.finishDate - (480 * 500)
-		myTimer = IncrementByTicTimer(timer)
-		val resultArray = myTimer.formatAndReturn(60000)
-		assertEquals("18:33:00", resultArray[0])
-		assertEquals("01:00", resultArray[1])
-		assertEquals("20/160", resultArray[2])
-	}
 }

@@ -37,8 +37,12 @@ interface TimerTypeDao {
 	fun deleteAll(): Int
 
 	@Insert
-	fun insertAll(vararg customTimers: TimerType)
+	fun insertType(vararg timerTypes: TimerType)
 
 	@Delete
-	fun delete(customTimer: TimerType)
+	fun deleteType(vararg timerTypes: TimerType)
+
+	@Update
+	fun updateType(vararg timerTypes: TimerType)
+
 }

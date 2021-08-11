@@ -40,6 +40,9 @@
     <string name="time_to_generate">Time to generate</string>
     <string name="confirm">Confirm</string>
     <string name="delete_this_timer">Delete this timer</string>
+    <string name="exit">Exit</string>
+    <string name="update">Update</string>
+    <string name="delete_this_type">Delete this timer type</string>
 
     <!--    <string name=""></string>-->
 </resources>

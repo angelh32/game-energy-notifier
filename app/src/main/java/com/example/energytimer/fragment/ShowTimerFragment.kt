@@ -73,9 +73,7 @@ class ShowTimerFragment : DialogFragment() {
 						}
 						builder.create()
 					}
-					if (alertDialog != null) {
-						alertDialog.show()
-					}
+					alertDialog.show()
 					getDialog()?.cancel()
 				}
 			builder.create()
