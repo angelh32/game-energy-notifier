@@ -5,26 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.example.energytimer.adapters.TypeItemAdapter
-import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.database.TimerType
 import com.example.energytimer.databinding.FragmentSecondBinding
+import com.example.energytimer.fragment.SharedData
 import com.example.energytimer.fragment.ShowTypeFragment
-import com.example.energytimer.tools.DatabaseName
-import kotlinx.coroutines.runBlocking
-import kotlin.concurrent.thread
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class SecondFragment : Fragment() {
+	private val model: SharedData by activityViewModels()
 
 	private var _binding: FragmentSecondBinding? = null
 	private val binding get() = _binding!!
-	private lateinit var db: LocalDatabase
 	private var currentList: List<TimerType> = listOf()
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var typeItemAdapter: TypeItemAdapter
@@ -38,6 +35,7 @@ class SecondFragment : Fragment() {
 		typeItemAdapter.submitList(currentList)
 		recyclerView = binding.recyclerViewTypes
 		recyclerView.adapter = typeItemAdapter
+		model.buildDatabase(requireContext())
 		recyclerView.addItemDecoration(
 			DividerItemDecoration(
 				this.context,
@@ -48,37 +46,23 @@ class SecondFragment : Fragment() {
 	}
 
 	private fun adapterOnClick(timerType: TimerType) {
-		val newFragment = ShowTypeFragment()
-		val bundle = Bundle()
-		bundle.putInt("current", timerType.typeId)
-		newFragment.arguments = bundle
-		newFragment.show(parentFragmentManager, "")
-	}
-
-	private fun insertTypes() = runBlocking {
-		thread {
-			db = Room.databaseBuilder(
-				requireContext(),
-				LocalDatabase::class.java,
-				DatabaseName
-			).build()
-			val timerDao = db.timerTypeDao()
-			val currentList = timerDao.getAll()
-			typeItemAdapter.submitList(currentList)
-		}
+		model.selectType(timerType)
+		ShowTypeFragment().show(parentFragmentManager, "TYPE")
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		insertTypes()
+		model.typelist.observe(viewLifecycleOwner, { list ->
+			typeItemAdapter.submitList(list)
+		})
+		model.refreshTypes()
 		binding.createType.setOnClickListener {
 			val newFragment = ShowTypeFragment()
 			newFragment.show(parentFragmentManager, "")
 		}
+		super.onViewCreated(view, savedInstanceState)
 	}
 
 	override fun onDestroyView() {
-		db.close()
 		super.onDestroyView()
 		_binding = null
 	}

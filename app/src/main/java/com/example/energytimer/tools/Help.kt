@@ -1,6 +1,8 @@
 package com.example.energytimer.tools
 
 import android.util.Log
+import com.example.energytimer.database.CustomTimer
+import com.example.energytimer.database.TimerType
 
 class Help {
 	companion object {
@@ -10,6 +12,12 @@ class Help {
 
 		fun formatFromSeconds(timeLeft: Long): String {
 			return formatFromMilliseconds(timeLeft * 1000)
+		}
+		fun createEmptyType(): TimerType {
+			return TimerType(0,"", "","",0,0)
+		}
+		fun createEmptyTimer(): CustomTimer {
+			return CustomTimer(0,0,"", "",0,0,0,0,0)
 		}
 
 		fun parseMillisecondsFromString(time: String): Long {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -12,7 +13,9 @@ import com.example.energytimer.adapters.TimerItemAdapter
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.databinding.FragmentFirstBinding
+import com.example.energytimer.fragment.SharedData
 import com.example.energytimer.fragment.ShowTimerFragment
+import com.example.energytimer.fragment.ShowTypeFragment
 import com.example.energytimer.tools.DatabaseName
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
@@ -24,10 +27,10 @@ import kotlin.concurrent.thread
 class FirstFragment : Fragment() {
 	private var _binding: FragmentFirstBinding? = null
 	private val binding get() = _binding!!
-	private lateinit var db: LocalDatabase
 	private var currentList: List<CustomTimer> = listOf()
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var timerAdapter: TimerItemAdapter
+	private val model: SharedData by activityViewModels()
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +41,7 @@ class FirstFragment : Fragment() {
 		timerAdapter.submitList(currentList)
 		recyclerView = binding.recyclerViewTimers
 		recyclerView.adapter = timerAdapter
+		model.buildDatabase(requireContext())
 		recyclerView.addItemDecoration(
 			DividerItemDecoration(
 				this.context,
@@ -47,40 +51,27 @@ class FirstFragment : Fragment() {
 		return binding.root
 	}
 
-	fun insert() = runBlocking {
-		thread {
-			db = Room.databaseBuilder(
-				requireContext(),
-				LocalDatabase::class.java,
-				DatabaseName
-			).build()
-			val timerDao = db.customTimerDao()
-			val currentList = timerDao.getAll()
-			timerAdapter.submitList(currentList)
-		}
-	}
-
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		insert()
+		model.timerList.observe(viewLifecycleOwner, { list ->
+			timerAdapter.submitList(list)
+		})
+		model.refreshTimers()
+		model.refreshTypes()
 		binding.createTimer.setOnClickListener {
 			val newFragment = ShowTimerFragment()
 			newFragment.show(parentFragmentManager, "")
 		}
+		super.onViewCreated(view, savedInstanceState)
 	}
 
 	override fun onDestroyView() {
-		db.close()
 		super.onDestroyView()
 		_binding = null
 	}
 
 	private fun adapterOnClick(customTimer: CustomTimer) {
-		val newFragment = ShowTimerFragment()
-		val bundle = Bundle()
-		bundle.putInt("current", customTimer.timerId)
-		newFragment.arguments = bundle
-		newFragment.show(parentFragmentManager, "")
+		model.selectTimer(customTimer)
+		ShowTimerFragment().show(parentFragmentManager, "TIMER")
 	}
 
 }

@@ -2,77 +2,86 @@ package com.example.energytimer.fragment
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
-import androidx.room.Room
+import androidx.fragment.app.activityViewModels
 import com.example.energytimer.R
-import com.example.energytimer.database.CustomTimer
-import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.database.TimerType
-import com.example.energytimer.tools.DatabaseName
 import com.example.energytimer.tools.Help
-import kotlinx.coroutines.runBlocking
 import java.util.*
-import kotlin.concurrent.thread
 
 
 class ShowTimerFragment : DialogFragment() {
-	private lateinit var db: LocalDatabase
-	private lateinit var current: CustomTimer
-	private lateinit var typesList: List<TimerType>
-	private var currentId = 0
+	// UI elements
+	private lateinit var dialogView: View
+	private lateinit var gameSpinner: Spinner
+	private lateinit var timerTypeSpinner: Spinner
+	private lateinit var timerName: EditText
+	private lateinit var timerDescription: EditText
+	private lateinit var currentValue: SeekBar
+	private lateinit var seekBarValue: TextView
+
+	// adapters
+	private lateinit var gameListAdapter: ArrayAdapter<String>
+	private lateinit var typesListAdapter: ArrayAdapter<String>
+
+	// Shared data
+	private val model: SharedData by activityViewModels()
+	private lateinit var allTypes: List<TimerType>
+	private lateinit var gamesForSpinnerLabels: List<String>
+	private lateinit var typesForSpinner: List<TimerType>
+	private lateinit var typesForSpinnerLabels: List<String>
+	private lateinit var selectedType: TimerType
+
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-		val bundle = arguments
 		return activity?.let {
 			val builder = AlertDialog.Builder(it)
 			val inflater = requireActivity().layoutInflater
-			if (bundle != null) {
-				currentId = bundle.getInt("current")
-			}
-			getCurrent(requireContext())
-			val view = inflater.inflate(R.layout.fragment_dialog_create_timer, null)
-
 			/* ----------- Dynamic elements ----------- */
-			val gameSpinner = view.findViewById<Spinner>(R.id.game_spinner)
-			val timerTypeSpinner = view.findViewById<Spinner>(R.id.timer_type_spinner)
-			val timerName = view.findViewById<EditText>(R.id.timer_name)
-			val timerDescription = view.findViewById<EditText>(R.id.timer_description)
-			val currentValue = view.findViewById<SeekBar>(R.id.initial_value)
-			val seekBarValue = view.findViewById<TextView>(R.id.seekbar_value)
+			dialogView = inflater.inflate(R.layout.fragment_dialog_create_timer, parentFragment)
+			gameSpinner = dialogView.findViewById(R.id.game_spinner)
+			timerTypeSpinner = dialogView.findViewById(R.id.timer_type_spinner)
+			timerName = dialogView.findViewById(R.id.timer_name)
+			timerDescription = dialogView.findViewById(R.id.timer_description)
+			currentValue = dialogView.findViewById(R.id.initial_value)
+			seekBarValue = dialogView.findViewById(R.id.seekbar_value)
 
-			var gameList = typesList.map { item -> item.gameName }
-			gameList = gameList.toSet().toList()
-			val adapter = ArrayAdapter(
+			gameListAdapter = ArrayAdapter(
 				requireContext(),
 				android.R.layout.simple_spinner_dropdown_item,
-				gameList
+				arrayListOf()
 			)
-			gameSpinner.adapter = adapter
-			lateinit var typeList: List<TimerType>
-			lateinit var selectedType: TimerType
+			gameSpinner.adapter = gameListAdapter
+
+			typesListAdapter = ArrayAdapter(
+				requireContext(),
+				android.R.layout.simple_spinner_dropdown_item,
+				arrayListOf()
+			)
+			timerTypeSpinner.adapter = typesListAdapter
+
 			gameSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 				override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-					val selectedGame = gameList[pos]
-					typeList = typesList.filter { item -> item.gameName.equals(selectedGame) }
-					val typeListString = typeList.map { item -> item.typeName }
-					val adapterType = ArrayAdapter(
-						requireContext(),
-						android.R.layout.simple_spinner_dropdown_item,
-						typeListString
-					)
-					timerTypeSpinner.adapter = adapterType
+					val selectedGame = gamesForSpinnerLabels[pos]
+					typesForSpinner = allTypes.filter { item -> item.gameName.equals(selectedGame) }
+					typesForSpinnerLabels = typesForSpinner.map { item -> item.typeName }
+					setListToSpinnerAdapter(typesListAdapter, typesForSpinnerLabels)
 				}
 
 				override fun onNothingSelected(parent: AdapterView<*>) {}
 			}
 			timerTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 				override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-					selectedType = typeList[pos]
-					currentValue.progress = current.initial
+					selectedType = typesForSpinner[pos]
+					Help.printLog(selectedType)
+					currentValue.progress = 1
 					currentValue.max = selectedType.max
+					timerName.setText(selectedType.typeName)
+					timerDescription.setText(selectedType.description)
 				}
 
 				override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -92,31 +101,22 @@ class ShowTimerFragment : DialogFragment() {
 				}
 			})
 
-			builder.setView(view)
+			builder.setView(dialogView)
 				.setTitle(R.string.add_new_timer)
 				.setPositiveButton(R.string.save) { dialog, id ->
 					Help.printLog("Type", "Save")
-					val typeId = selectedType.typeId
-					val timerNameString = timerName.text.toString()
-					val timerDesc = timerDescription.text.toString()
-					val initialValue = seekBarValue.text.toString().toInt()
-					val max = selectedType.max
-					val tic = selectedType.tic
-					val startDate = Date().time
-					val finishDate = startDate + (initialValue * tic * 1000)
-					saveCurrent(
-						CustomTimer(
-							0,
-							typeId,
-							timerNameString,
-							timerDesc,
-							initialValue,
-							max,
-							tic,
-							startDate,
-							finishDate
-						)
-					)
+					var customTimer = Help.createEmptyTimer()
+					customTimer.timerId = selectedType.typeId
+					customTimer.typeId = selectedType.typeId
+					customTimer.timerName = timerName.text.toString()
+					customTimer.description = timerDescription.text.toString()
+					customTimer.initial = seekBarValue.text.toString().toInt()
+					customTimer.max = selectedType.max
+					customTimer.tic = selectedType.tic
+					customTimer.startDate = Date().time
+					customTimer.finishDate = customTimer.startDate + (customTimer.initial * customTimer.tic * 1000)
+					model.saveTimer(customTimer)
+					model.refreshTimers()
 				}
 				.setNeutralButton(R.string.edit) { dialog, id ->
 					Help.printLog("Type", "cancel")
@@ -130,37 +130,30 @@ class ShowTimerFragment : DialogFragment() {
 		} ?: throw IllegalStateException("Activity cannot be null")
 	}
 
-	override fun onDestroy() {
-		db.close()
-		super.onDestroy()
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View? {
+		return dialogView
 	}
 
-	private fun saveCurrent(current: CustomTimer) = runBlocking {
-		thread {
-			val timerDao = db.customTimerDao()
-			timerDao.insertAll(current)
-		}
+	fun setListToSpinnerAdapter(adapter: ArrayAdapter<String>, list: List<String>) {
+		adapter.clear()
+		adapter.addAll(list)
 	}
 
-	private fun getCurrent(context: Context) {
-		db = Room.databaseBuilder(
-			context,
-			LocalDatabase::class.java,
-			DatabaseName
-		)
-			.allowMainThreadQueries()
-			.build()
-		val timerDao = db.customTimerDao()
-		val typeDao = db.timerTypeDao()
-		typesList = typeDao.getAll()
-		val fromDb = timerDao.findById(currentId)
-		current = if (fromDb == null) {
-			CustomTimer(0, 0, "", "", 0, 0, 0, 0, 0)
-		} else {
-			fromDb
-		}
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		allTypes = model.typelist.value!!
+		val games = allTypes.map { item -> item.gameName }
+		gamesForSpinnerLabels = games.toSet().toList()
+		setListToSpinnerAdapter(gameListAdapter, gamesForSpinnerLabels)
+		val types = allTypes.map { item -> item.typeName }
+		typesForSpinnerLabels = types.toSet().toList()
+		setListToSpinnerAdapter(typesListAdapter, typesForSpinnerLabels)
+		model.selectedTimer.observe(viewLifecycleOwner, { timer ->
+			Help.printLog("dial", timer.toString())
+		})
+		super.onViewCreated(view, savedInstanceState)
 	}
-//	companion object {
-//		const val TAG = "PurchaseConfirmationDialog"
-//	}
 }

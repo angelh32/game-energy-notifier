@@ -2,53 +2,52 @@ package com.example.energytimer.fragment
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
-import androidx.room.Room
+import androidx.fragment.app.activityViewModels
 import com.example.energytimer.R
-import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.database.TimerType
-import com.example.energytimer.database.TimerTypeDao
-import com.example.energytimer.tools.DatabaseName
 import com.example.energytimer.tools.Help
-import kotlinx.coroutines.runBlocking
-import kotlin.concurrent.thread
 
 
 class ShowTypeFragment : DialogFragment() {
-	private lateinit var db: LocalDatabase
-	private lateinit var current: TimerType
-	private var currentId = 0
+	// UI elements
+	private lateinit var dialogView: View
+	private lateinit var timerNameText: EditText
+	private lateinit var gameNameText: EditText
+	private lateinit var maxValue: EditText
+	private lateinit var tic: EditText
+
+	// Shared data
+	private val model: SharedData by activityViewModels()
+
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 		val bundle = arguments
 		return activity?.let {
 			val builder = AlertDialog.Builder(it)
 			val inflater = requireActivity().layoutInflater
-			if (bundle != null) {
-				currentId = bundle.getInt("current")
-			}
-			getCurrent(requireContext())
-			val view = inflater.inflate(R.layout.fragment_dialog_create_type, null)
-			val timerNameText = view.findViewById<EditText>(R.id.type_name)
-			val gameNameText = view.findViewById<EditText>(R.id.game_name)
-			val maxValue = view.findViewById<EditText>(R.id.max_value)
-			val tic = view.findViewById<EditText>(R.id.tic)
-			timerNameText.setText(current.typeName)
-			gameNameText.setText(current.gameName)
-			maxValue.setText("${current.max}")
-			tic.setText("${current.tic}")
-
-			builder.setView(view)
+			dialogView = inflater.inflate(R.layout.fragment_dialog_create_type, null)
+			timerNameText = dialogView.findViewById(R.id.type_name)
+			gameNameText = dialogView.findViewById(R.id.game_name)
+			maxValue = dialogView.findViewById(R.id.max_value)
+			tic = dialogView.findViewById(R.id.tic)
+			builder.setView(dialogView)
 				.setTitle(R.string.dialog_type)
 				.setPositiveButton(R.string.save) { dialog, id ->
-					Help.printLog("Type", "Save")
-					current.typeName = timerNameText.text.toString()
-					current.gameName = gameNameText.text.toString()
-					current.max = maxValue.text.toString().toInt()
-					current.tic = tic.text.toString().toInt()
-					saveCurrent(current)
+					val saveType = TimerType(
+						0,
+						gameNameText.text.toString(),
+						timerNameText.text.toString(),
+						"",
+						maxValue.text.toString().toInt(),
+						tic.text.toString().toInt()
+					)
+					model.saveType(saveType)
+					model.refreshTypes()
 				}
 				.setNeutralButton(R.string.edit) { dialog, id ->
 					Help.printLog("Type", "cancel")
@@ -62,30 +61,21 @@ class ShowTypeFragment : DialogFragment() {
 		} ?: throw IllegalStateException("Activity cannot be null")
 	}
 
-	private fun saveCurrent(current: TimerType) = runBlocking {
-		thread {
-			val timerDao: TimerTypeDao = db.timerTypeDao()
-			timerDao.insertAll(current)
-		}
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View? {
+		return dialogView
 	}
 
-	private fun getCurrent(context: Context) {
-		db = Room.databaseBuilder(
-			context,
-			LocalDatabase::class.java,
-			DatabaseName
-		)
-			.allowMainThreadQueries()
-			.build()
-		val timerDao: TimerTypeDao = db.timerTypeDao()
-		val fromDb = timerDao.findById(currentId)
-		if (fromDb == null) {
-			current = TimerType(0, "", "", "", 0, 0)
-		} else {
-			current = fromDb
-		}
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		model.selectedType.observe(viewLifecycleOwner, { type ->
+			timerNameText.setText(type.typeName)
+			gameNameText.setText(type.gameName)
+			maxValue.setText("${type.max}")
+			tic.setText("${type.tic}")
+		})
+		super.onViewCreated(view, savedInstanceState)
 	}
-//	companion object {
-//		const val TAG = "PurchaseConfirmationDialog"
-//	}
 }

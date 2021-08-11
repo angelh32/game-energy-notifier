@@ -13,11 +13,11 @@ import androidx.room.*
 data class CustomTimer(
 	@PrimaryKey(autoGenerate = true) var timerId: Int,
 	@ColumnInfo var typeId: Int,
-	@ColumnInfo val timerName: String,
-	@ColumnInfo val description: String,
-	@ColumnInfo val initial: Int,
-	@ColumnInfo val max: Int,
-	@ColumnInfo val tic: Int,
+	@ColumnInfo var timerName: String,
+	@ColumnInfo var description: String,
+	@ColumnInfo var initial: Int,
+	@ColumnInfo var max: Int,
+	@ColumnInfo var tic: Int,
 	@ColumnInfo var startDate: Long,
 	@ColumnInfo var finishDate: Long,
 )
