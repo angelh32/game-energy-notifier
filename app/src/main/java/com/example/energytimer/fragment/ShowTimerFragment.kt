@@ -42,7 +42,7 @@ class ShowTimerFragment : DialogFragment() {
 			val builder = AlertDialog.Builder(it)
 			val inflater = requireActivity().layoutInflater
 			/* ----------- Dynamic elements ----------- */
-			dialogView = inflater.inflate(R.layout.fragment_dialog_create_timer, parentFragment)
+			dialogView = inflater.inflate(R.layout.fragment_dialog_create_timer, null)
 			gameSpinner = dialogView.findViewById(R.id.game_spinner)
 			timerTypeSpinner = dialogView.findViewById(R.id.timer_type_spinner)
 			timerName = dialogView.findViewById(R.id.timer_name)
@@ -77,7 +77,6 @@ class ShowTimerFragment : DialogFragment() {
 			timerTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 				override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
 					selectedType = typesForSpinner[pos]
-					Help.printLog(selectedType)
 					currentValue.progress = 1
 					currentValue.max = selectedType.max
 					timerName.setText(selectedType.typeName)
@@ -106,7 +105,7 @@ class ShowTimerFragment : DialogFragment() {
 				.setPositiveButton(R.string.save) { dialog, id ->
 					Help.printLog("Type", "Save")
 					var customTimer = Help.createEmptyTimer()
-					customTimer.timerId = selectedType.typeId
+//					customTimer.timerId = selectedType.typeId
 					customTimer.typeId = selectedType.typeId
 					customTimer.timerName = timerName.text.toString()
 					customTimer.description = timerDescription.text.toString()
@@ -114,7 +113,7 @@ class ShowTimerFragment : DialogFragment() {
 					customTimer.max = selectedType.max
 					customTimer.tic = selectedType.tic
 					customTimer.startDate = Date().time
-					customTimer.finishDate = customTimer.startDate + (customTimer.initial * customTimer.tic * 1000)
+					customTimer.finishDate = customTimer.startDate + ((customTimer.max-customTimer.initial) * customTimer.tic * 1000)
 					model.saveTimer(customTimer)
 					model.refreshTimers()
 				}
@@ -152,7 +151,10 @@ class ShowTimerFragment : DialogFragment() {
 		typesForSpinnerLabels = types.toSet().toList()
 		setListToSpinnerAdapter(typesListAdapter, typesForSpinnerLabels)
 		model.selectedTimer.observe(viewLifecycleOwner, { timer ->
-			Help.printLog("dial", timer.toString())
+			currentValue.progress = 1
+			currentValue.max = timer.max
+			timerName.setText(timer.timerName)
+			timerDescription.setText(timer.description)
 		})
 		super.onViewCreated(view, savedInstanceState)
 	}

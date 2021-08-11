@@ -1,14 +1,16 @@
 package com.example.energytimer.tools
 
 import android.os.CountDownTimer
+import androidx.lifecycle.MutableLiveData
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.tools.Help.Companion.formatFromMilliseconds
 import java.util.*
 
-class IncrementByTicTimer(
-	currentTimer: CustomTimer,
-	private val updateTextCallback: (timeLeft: Array<String>) -> Unit,
-) {
+class IncrementByTicTimer(currentTimer: CustomTimer) {
+	val totalTimeLeftLabel = MutableLiveData<String>()
+	val totalGeneratedLabel = MutableLiveData<String>()
+	val currentTimeLabel = MutableLiveData<String>()
+
 	private lateinit var cTimer: CountDownTimer
 	var isTimerRunning = false
 	private var timer: CustomTimer = currentTimer
@@ -20,13 +22,20 @@ class IncrementByTicTimer(
 		refreshValues()
 	}
 
-	private fun refreshValues(){
+	private fun refreshValues() {
 		val currentDate = Date().time
-		val stack = (currentDate-timer.startDate)/(timer.tic*1000)
-		currentValue=timer.initial+stack.toInt()
-		val timeLeft = timer.finishDate-currentDate
-		timeNextTic = timeLeft.mod(timer.tic*1000).toLong()
-		timeToFinish=timeLeft-timeNextTic
+		val stack = (currentDate - timer.startDate) / (timer.tic * 1000)
+		if (stack > timer.max) {
+			currentValue = timer.max
+			totalTimeLeftLabel.value = "Completed"
+			totalGeneratedLabel.value = String.format("%02d / %02d", currentValue, currentValue)
+			currentTimeLabel.value = "Completed"
+		} else {
+			currentValue = timer.initial + stack.toInt()
+			val timeLeft = timer.finishDate - currentDate
+			timeNextTic = timeLeft.mod(timer.tic * 1000).toLong()
+			timeToFinish = timeLeft - timeNextTic
+		}
 	}
 
 	fun startCount() {
@@ -37,9 +46,9 @@ class IncrementByTicTimer(
 		}
 	}
 
-	fun formatAndReturn(timeLeft: Long): Array<String>{
+	fun formatAndReturn(timeLeft: Long): Array<String> {
 		return arrayOf(
-			formatFromMilliseconds(timeLeft+timeToFinish),
+			formatFromMilliseconds(timeLeft + timeToFinish),
 			formatFromMilliseconds(timeLeft),
 			"$currentValue/${timer.max}"
 		)
@@ -47,16 +56,19 @@ class IncrementByTicTimer(
 
 
 	fun startTimer() {
-		cTimer = object: CountDownTimer(timeNextTic, 1000) {
+		cTimer = object : CountDownTimer(timeNextTic, 1000) {
 			override fun onTick(timeLeft: Long) {
-				updateTextCallback(formatAndReturn(timeLeft))
+				totalTimeLeftLabel.value = formatFromMilliseconds(timeLeft + timeToFinish)
+				totalGeneratedLabel.value = formatFromMilliseconds(timeLeft)
+				currentTimeLabel.value = "$currentValue/${timer.max}"
 			}
+
 			override fun onFinish() {
 				currentValue++
 				startCount()
 			}
 		}
-		isTimerRunning=true
+		isTimerRunning = true
 		cTimer.start()
 	}
 

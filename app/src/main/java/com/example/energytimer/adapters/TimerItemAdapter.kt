@@ -36,24 +36,20 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 
 		fun bind(timer: CustomTimer) {
 			currentTimer = timer
-			val myTimer = IncrementByTicTimer(currentTimer) { timeLeft -> updateText(timeLeft) }
+			val myTimer = IncrementByTicTimer(currentTimer)
 			if (!myTimer.isTimerRunning) {
 				myTimer.startTimer()
 			}
 			timerName.text = timer.timerName
 			description.text = timer.description
 			val pattern = "MM-dd-yyyy hh:mm"
+			myTimer.totalTimeLeftLabel.observeForever { label -> showTime.setText(label) }
+			myTimer.currentTimeLabel.observeForever { label -> nextCount.setText(label) }
+			myTimer.totalGeneratedLabel.observeForever { label -> maxValue.setText(label) }
 			val simpleDateFormat = SimpleDateFormat(pattern, Locale.US)
 			startDateText.text = simpleDateFormat.format(Date(timer.startDate))
 			finishDateText.text = simpleDateFormat.format(Date(timer.finishDate))
 		}
-
-		private fun updateText(response: Array<String>) {
-			showTime.text = response[0]
-			nextCount.text = response[1]
-			maxValue.text = response[2]
-		}
-
 	}
 
 

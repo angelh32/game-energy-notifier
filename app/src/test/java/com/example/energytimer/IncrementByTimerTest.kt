@@ -31,14 +31,9 @@ class IncrementByTimerTest {
 		)
 	}
 
-	private fun mockCallBack(time: Array<String>) {
-		print(time)
-		return
-	}
-
 	@Test
 	fun create_new_timer_has_same_current() {
-		myTimer = IncrementByTicTimer(timer) { timeLeft: Array<String> -> mockCallBack(timeLeft) }
+		myTimer = IncrementByTicTimer(timer)
 		assertEquals("Expecting to find user John with id '0'", 20, myTimer.currentValue)
 	}
 
@@ -46,21 +41,21 @@ class IncrementByTimerTest {
 	fun create_existing_timer_has_correct_current() {
 		val current = 20
 		timer.startDate = currentDate - (current * 480 * 1000)
-		myTimer = IncrementByTicTimer(timer) { timeLeft: Array<String> -> mockCallBack(timeLeft) }
+		myTimer = IncrementByTicTimer(timer)
 		assertEquals(40, myTimer.currentValue)
 	}
 
 	@Test
 	fun create_existing_timer_has_correct_next_tic() {
 		timer.finishDate = timer.finishDate - (480 * 500)
-		myTimer = IncrementByTicTimer(timer) { timeLeft: Array<String> -> mockCallBack(timeLeft) }
-		assertEquals(239, myTimer.timeNextTic / 1000)
+		myTimer = IncrementByTicTimer(timer)
+		assertEquals(240, myTimer.timeNextTic / 1000)
 	}
 
 	@Test
 	fun create_existing_timer_has_correct_next_fist_value() {
 		timer.finishDate = timer.finishDate - (480 * 500)
-		myTimer = IncrementByTicTimer(timer) { timeLeft: Array<String> -> mockCallBack(timeLeft) }
+		myTimer = IncrementByTicTimer(timer)
 		val resultArray = myTimer.formatAndReturn(60000)
 		assertEquals("18:33:00", resultArray[0])
 		assertEquals("01:00", resultArray[1])

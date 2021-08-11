@@ -8,17 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.example.energytimer.adapters.TimerItemAdapter
 import com.example.energytimer.database.CustomTimer
-import com.example.energytimer.database.LocalDatabase
 import com.example.energytimer.databinding.FragmentFirstBinding
 import com.example.energytimer.fragment.SharedData
 import com.example.energytimer.fragment.ShowTimerFragment
-import com.example.energytimer.fragment.ShowTypeFragment
-import com.example.energytimer.tools.DatabaseName
-import kotlinx.coroutines.runBlocking
-import kotlin.concurrent.thread
+import com.example.energytimer.tools.Help
 
 
 /**
@@ -59,7 +54,8 @@ class FirstFragment : Fragment() {
 		model.refreshTypes()
 		binding.createTimer.setOnClickListener {
 			val newFragment = ShowTimerFragment()
-			newFragment.show(parentFragmentManager, "")
+			model.selectTimer(Help.createEmptyTimer())
+			newFragment.show(parentFragmentManager, "NEW_TIMER")
 		}
 		super.onViewCreated(view, savedInstanceState)
 	}
