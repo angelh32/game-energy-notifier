@@ -1,7 +1,7 @@
 package com.example.energytimer
 
 import com.example.energytimer.database.CustomTimer
-import com.example.energytimer.tools.IncrementByTicTimer
+import com.example.energytimer.tools.IncrementByTimer
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -9,7 +9,7 @@ import java.util.*
 
 class IncrementByTimerTest {
 	private lateinit var timer: CustomTimer
-	private lateinit var myTimer: IncrementByTicTimer
+	private lateinit var myTimer: IncrementByTimer
 	private val currentDate = Date().time
 	private val currentCount = 20
 	private val maxValue = 160
@@ -33,7 +33,7 @@ class IncrementByTimerTest {
 
 	@Test
 	fun create_new_timer_has_same_current() {
-		myTimer = IncrementByTicTimer(timer)
+		myTimer = IncrementByTimer(timer)
 		assertEquals("Expecting to find user John with id '0'", 20, myTimer.currentValue)
 	}
 
@@ -41,14 +41,14 @@ class IncrementByTimerTest {
 	fun create_existing_timer_has_correct_current() {
 		val current = 20
 		timer.startDate = currentDate - (current * 480 * 1000)
-		myTimer = IncrementByTicTimer(timer)
+		myTimer = IncrementByTimer(timer)
 		assertEquals(40, myTimer.currentValue)
 	}
 
 	@Test
 	fun create_existing_timer_has_correct_next_tic() {
 		timer.finishDate = timer.finishDate - (480 * 500)
-		myTimer = IncrementByTicTimer(timer)
+		myTimer = IncrementByTimer(timer)
 		assertEquals(240, myTimer.timeNextTic / 1000)
 	}
 }

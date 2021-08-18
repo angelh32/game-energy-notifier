@@ -6,7 +6,7 @@ import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.tools.Help.Companion.formatFromMilliseconds
 import java.util.*
 
-class IncrementByTicTimer(currentTimer: CustomTimer) {
+class IncrementByTimer(currentTimer: CustomTimer) {
 	val totalTimeLeftLabel = MutableLiveData<String>()
 	val totalGeneratedLabel = MutableLiveData<String>()
 	val currentTimeLabel = MutableLiveData<String>()

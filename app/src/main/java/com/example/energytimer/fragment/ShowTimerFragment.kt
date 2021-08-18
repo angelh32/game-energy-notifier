@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.energytimer.R
 import com.example.energytimer.tools.Help
-import com.example.energytimer.tools.IncrementByTicTimer
+import com.example.energytimer.tools.IncrementByTimer
 
 
 class ShowTimerFragment : DialogFragment() {
@@ -91,7 +91,7 @@ class ShowTimerFragment : DialogFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		model.selectedTimer.observe(viewLifecycleOwner, { timer ->
 			val currentType = model.selectedType.value!!
-			val myTimer = IncrementByTicTimer(timer)
+			val myTimer = IncrementByTimer(timer)
 			if (!myTimer.isTimerRunning) {
 				myTimer.startTimer()
 			}

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.energytimer.R
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.tools.Help
-import com.example.energytimer.tools.IncrementByTicTimer
+import com.example.energytimer.tools.IncrementByTimer
 
 class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 	ListAdapter<CustomTimer, TimerItemAdapter.CustomTimerViewHolder>(CustomTimerDiffCallback) {
@@ -35,7 +35,7 @@ class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 
 		fun bind(timer: CustomTimer) {
 			currentTimer = timer
-			val myTimer = IncrementByTicTimer(currentTimer)
+			val myTimer = IncrementByTimer(currentTimer)
 			if (!myTimer.isTimerRunning) {
 				myTimer.startTimer()
 			}
