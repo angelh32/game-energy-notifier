@@ -7,11 +7,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.energytimer.database.*
 import com.example.energytimer.tools.Help.Companion.printLog
-import junit.framework.Assert.assertEquals
 import junit.runner.Version
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
@@ -30,7 +30,7 @@ class SimpleDbReadWriteTest {
 		val context = ApplicationProvider.getApplicationContext<Context>()
 		db = Room.inMemoryDatabaseBuilder(context, LocalDatabase::class.java).build()
 		customType =
-			TimerType(1, "game","type-1", "", 160, 480)
+			TimerType(1, "game", "type-1", "", 160, 480)
 		customTimer =
 			CustomTimer(1, 1, "timer-1", "description", 1, 160, 480, Date().time, Date().time)
 		timerDao = db.customTimerDao()
@@ -46,14 +46,14 @@ class SimpleDbReadWriteTest {
 
 	@Test
 	fun write_and_read_timer_type_in_list() {
-		typeDao.insertAll(customType)
+		typeDao.insertType(customType)
 		val typeFromDb = typeDao.getAll()
 		assertThat(typeFromDb[0], equalTo(customType))
 	}
 
 	@Test
 	fun write_and_read_timer_type_without_timers_in_list() {
-		typeDao.insertAll(customType)
+		typeDao.insertType(customType)
 		val typeFromDb = typeDao.typeWithTimers(customTimer.timerId)
 		assertEquals(typeFromDb.timers.size, 0)
 	}
@@ -71,7 +71,7 @@ class SimpleDbReadWriteTest {
 
 	@Test
 	fun write_and_read_timer_in_list() {
-		typeDao.insertAll(customType)
+		typeDao.insertType(customType)
 		timerDao.insertAll(customTimer)
 		val byName = timerDao.getAll()
 		assertThat(byName[0], equalTo(customTimer))
@@ -80,7 +80,7 @@ class SimpleDbReadWriteTest {
 	@Test
 	fun write_and_read_a_timer_with_type() {
 		customType.typeId = 4
-		typeDao.insertAll(customType)
+		typeDao.insertType(customType)
 		customTimer.timerId = 4
 		customTimer.typeId = 4
 		timerDao.insertAll(customTimer)
