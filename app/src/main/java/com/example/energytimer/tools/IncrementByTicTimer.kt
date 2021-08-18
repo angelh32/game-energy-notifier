@@ -26,7 +26,7 @@ class IncrementByTicTimer(currentTimer: CustomTimer) {
 		val currentDate = Date().time
 		val stack = (currentDate - timer.startDate) / (timer.tic * 1000)
 		currentValue = timer.max
-		if (stack > timer.max) {
+		if (timer.finishDate < currentDate) {
 			totalTimeLeftLabel.value = "Completed"
 			totalGeneratedLabel.value = String.format("%02d / %02d", currentValue, currentValue)
 			currentTimeLabel.value = "-- : --"

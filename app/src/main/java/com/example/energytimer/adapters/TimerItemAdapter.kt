@@ -11,8 +11,6 @@ import com.example.energytimer.R
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.tools.Help
 import com.example.energytimer.tools.IncrementByTicTimer
-import java.text.SimpleDateFormat
-import java.util.*
 
 class TimerItemAdapter(private val onClick: (CustomTimer) -> Unit) :
 	ListAdapter<CustomTimer, TimerItemAdapter.CustomTimerViewHolder>(CustomTimerDiffCallback) {

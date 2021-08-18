@@ -67,7 +67,7 @@ class EditTimerFragment : DialogFragment() {
 			gameSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 				override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
 					val selectedGame = gamesForSpinnerLabels[pos]
-					typesForSpinner = allTypes.filter { item -> item.gameName.equals(selectedGame) }
+					typesForSpinner = allTypes.filter { item -> item.gameName == selectedGame }
 					typesForSpinnerLabels = typesForSpinner.map { item -> item.typeName }
 					setListToSpinnerAdapter(typesListAdapter, typesForSpinnerLabels)
 				}
@@ -102,9 +102,9 @@ class EditTimerFragment : DialogFragment() {
 
 			builder.setView(dialogView)
 				.setTitle(R.string.add_new_timer)
-				.setPositiveButton(R.string.save) { dialog, id ->
+				.setPositiveButton(R.string.save) { _, _ ->
 					Help.printLog("Type", "Save")
-					var customTimer = Help.createEmptyTimer()
+					val customTimer = Help.createEmptyTimer()
 //					customTimer.timerId = selectedType.typeId
 					customTimer.typeId = selectedType.typeId
 					customTimer.timerName = timerName.text.toString()
@@ -117,13 +117,8 @@ class EditTimerFragment : DialogFragment() {
 					model.saveTimer(customTimer)
 					model.refreshTimers()
 				}
-				.setNeutralButton(R.string.edit) { dialog, id ->
-					Help.printLog("Type", "cancel")
-					getDialog()?.cancel()
-				}
-				.setNegativeButton(R.string.start) { dialog, id ->
-					Help.printLog("Type", "negative")
-					getDialog()?.cancel()
+				.setNegativeButton(R.string.cancel) { dialog, _ ->
+					dialog.cancel()
 				}
 			builder.create()
 		} ?: throw IllegalStateException("Activity cannot be null")

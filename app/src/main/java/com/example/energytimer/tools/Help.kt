@@ -60,7 +60,7 @@ class Help {
 		}
 
 		fun splitFromSeconds(left: Long): List<Int> {
-			val timeLeft=left*1000
+			val timeLeft = left * 1000
 			val days = timeLeft / (24 * 60 * 60 * 1000)
 			val hours = timeLeft / (60 * 60 * 1000) % 24
 			val minutes = timeLeft / (60 * 1000) % 60

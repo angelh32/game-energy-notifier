@@ -11,15 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.energytimer.adapters.TimerItemAdapter
 import com.example.energytimer.database.CustomTimer
 import com.example.energytimer.databinding.FragmentFirstBinding
-import com.example.energytimer.fragment.SharedData
 import com.example.energytimer.fragment.EditTimerFragment
+import com.example.energytimer.fragment.SharedData
 import com.example.energytimer.fragment.ShowTimerFragment
 import com.example.energytimer.tools.Help
 
-
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class FirstFragment : Fragment() {
 	private var _binding: FragmentFirstBinding? = null
 	private val binding get() = _binding!!
