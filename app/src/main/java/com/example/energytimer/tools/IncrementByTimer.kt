@@ -46,21 +46,26 @@ class IncrementByTimer(currentTimer: CustomTimer) {
 		}
 	}
 
-	fun startTimer() {
-		cTimer = object : CountDownTimer(timeNextTic, 1000) {
-			override fun onTick(timeLeft: Long) {
-				totalTimeLeftLabel.value = formatFromMilliseconds(timeLeft + timeToFinish)
-				currentTimeLabel.value = formatFromMilliseconds(timeLeft)
-				totalGeneratedLabel.value = "$currentValue/${timer.max}"
-			}
+	fun updateLiveValues(timeLeft: Long) {
+		totalTimeLeftLabel.value = formatFromMilliseconds(timeLeft + timeToFinish)
+		currentTimeLabel.value = formatFromMilliseconds(timeLeft)
+		totalGeneratedLabel.value = "$currentValue/${timer.max}"
+	}
 
-			override fun onFinish() {
-				currentValue++
-				startCount()
+	fun startTimer() {
+		if (!isTimerRunning) {
+			cTimer = object : CountDownTimer(timeNextTic, 1000) {
+				override fun onTick(timeLeft: Long) {
+					updateLiveValues(timeLeft)
+				}
+
+				override fun onFinish() {
+					startCount()
+				}
 			}
+			isTimerRunning = true
+			cTimer.start()
 		}
-		isTimerRunning = true
-		cTimer.start()
 	}
 
 	fun cancelTimer() {
