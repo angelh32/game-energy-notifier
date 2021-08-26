@@ -14,6 +14,8 @@ import com.example.energytimer.databinding.FragmentFirstBinding
 import com.example.energytimer.fragment.EditTimerFragment
 import com.example.energytimer.fragment.SharedData
 import com.example.energytimer.fragment.ShowTimerFragment
+import com.example.energytimer.tools.CustomAlarm
+import com.example.energytimer.tools.CustomNotification
 import com.example.energytimer.tools.Help
 
 class FirstFragment : Fragment() {
@@ -54,6 +56,8 @@ class FirstFragment : Fragment() {
 			model.selectTimer(Help.createEmptyTimer())
 			newFragment.show(parentFragmentManager, "NEW_TIMER")
 		}
+		val alarm = CustomAlarm(requireContext())
+		alarm.setAlarm()
 		super.onViewCreated(view, savedInstanceState)
 	}
 
